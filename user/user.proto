@@ -379,6 +379,30 @@ message clientConfig {
   string value = 3;
 }
 
+message GetUserPrivateKeyReq {
+  string userID = 1;
+}
+
+message GetUserPrivateKeyResp {
+  string privateKey = 1; // 16进制字符�?
+}
+
+message GetUserCertificateReq {
+  string userID = 1;
+}
+
+message GetUserCertificateResp {
+  string certificate = 1; // PEM格式证书
+}
+
+message GetSeedRequest {
+  string userID = 1;
+}
+
+message GetSeedResponse {
+  string seed = 1;
+}
+
 service user {
   //Get the specified user information full field
   rpc getDesignateUsers(getDesignateUsersReq) returns (getDesignateUsersResp);
@@ -439,5 +463,10 @@ service user {
   rpc delUserClientConfig(delUserClientConfigReq) returns (delUserClientConfigResp);
 
   rpc pageUserClientConfig(pageUserClientConfigReq) returns (pageUserClientConfigResp);
-
+  // 获取用户私钥
+  rpc GetUserPrivateKey(GetUserPrivateKeyReq) returns (GetUserPrivateKeyResp);
+  // 获取用户证书  
+  rpc GetUserCertificate(GetUserCertificateReq) returns (GetUserCertificateResp);
+  // 获取Seed
+  rpc GetSeed(GetSeedRequest) returns (GetSeedResponse);
 }
