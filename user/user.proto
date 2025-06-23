@@ -403,6 +403,14 @@ message GetSeedResponse {
   string seed = 1;
 }
 
+message GetCAPublicKeyRequest {
+  string userID = 1;
+}
+
+message GetCAPublicKeyResponse {
+  string CAPublicKey = 1;
+}
+
 service user {
   //Get the specified user information full field
   rpc getDesignateUsers(getDesignateUsersReq) returns (getDesignateUsersResp);
@@ -469,4 +477,6 @@ service user {
   rpc GetUserCertificate(GetUserCertificateReq) returns (GetUserCertificateResp);
   // 获取Seed
   rpc GetSeed(GetSeedRequest) returns (GetSeedResponse);
+  // 获取CA公钥
+  rpc GetCAPublicKey(GetCAPublicKeyRequest) returns (GetCAPublicKeyResponse);
 }

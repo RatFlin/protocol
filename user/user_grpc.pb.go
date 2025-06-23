@@ -66,6 +66,7 @@ const (
 	User_GetUserPrivateKey_FullMethodName             = "/openim.user.user/GetUserPrivateKey"
 	User_GetUserCertificate_FullMethodName            = "/openim.user.user/GetUserCertificate"
 	User_GetSeed_FullMethodName                       = "/openim.user.user/GetSeed"
+	User_GetCAPublicKey_FullMethodName                = "/openim.user.user/GetCAPublicKey"
 )
 
 // UserClient is the client API for User service.
@@ -131,6 +132,8 @@ type UserClient interface {
 	GetUserCertificate(ctx context.Context, in *GetUserCertificateReq, opts ...grpc.CallOption) (*GetUserCertificateResp, error)
 	// 获取Seed
 	GetSeed(ctx context.Context, in *GetSeedRequest, opts ...grpc.CallOption) (*GetSeedResponse, error)
+	// 获取CA公钥
+	GetCAPublicKey(ctx context.Context, in *GetCAPublicKeyRequest, opts ...grpc.CallOption) (*GetCAPublicKeyResponse, error)
 }
 
 type userClient struct {
@@ -471,6 +474,16 @@ func (c *userClient) GetSeed(ctx context.Context, in *GetSeedRequest, opts ...gr
 	return out, nil
 }
 
+func (c *userClient) GetCAPublicKey(ctx context.Context, in *GetCAPublicKeyRequest, opts ...grpc.CallOption) (*GetCAPublicKeyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetCAPublicKeyResponse)
+	err := c.cc.Invoke(ctx, User_GetCAPublicKey_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServer is the server API for User service.
 // All implementations must embed UnimplementedUserServer
 // for forward compatibility.
@@ -534,6 +547,8 @@ type UserServer interface {
 	GetUserCertificate(context.Context, *GetUserCertificateReq) (*GetUserCertificateResp, error)
 	// 获取Seed
 	GetSeed(context.Context, *GetSeedRequest) (*GetSeedResponse, error)
+	// 获取CA公钥
+	GetCAPublicKey(context.Context, *GetCAPublicKeyRequest) (*GetCAPublicKeyResponse, error)
 	mustEmbedUnimplementedUserServer()
 }
 
@@ -642,6 +657,9 @@ func (UnimplementedUserServer) GetUserCertificate(context.Context, *GetUserCerti
 }
 func (UnimplementedUserServer) GetSeed(context.Context, *GetSeedRequest) (*GetSeedResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetSeed not implemented")
+}
+func (UnimplementedUserServer) GetCAPublicKey(context.Context, *GetCAPublicKeyRequest) (*GetCAPublicKeyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCAPublicKey not implemented")
 }
 func (UnimplementedUserServer) mustEmbedUnimplementedUserServer() {}
 func (UnimplementedUserServer) testEmbeddedByValue()              {}
@@ -1258,6 +1276,24 @@ func _User_GetSeed_Handler(srv interface{}, ctx context.Context, dec func(interf
 	return interceptor(ctx, in, info, handler)
 }
 
+func _User_GetCAPublicKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCAPublicKeyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).GetCAPublicKey(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_GetCAPublicKey_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).GetCAPublicKey(ctx, req.(*GetCAPublicKeyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // User_ServiceDesc is the grpc.ServiceDesc for User service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1396,6 +1432,10 @@ var User_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetSeed",
 			Handler:    _User_GetSeed_Handler,
+		},
+		{
+			MethodName: "GetCAPublicKey",
+			Handler:    _User_GetCAPublicKey_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
